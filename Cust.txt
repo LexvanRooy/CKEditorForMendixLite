@@ -1,0 +1,99 @@
+Deze aangepaste versie van CKEditor voor Mendix bevat the LITE plugin waardoor het markeren en volgen van wijzigingen mogelijk wordt. De optie om dit in te schakelen is opgenomen in de Documentopties met TWEE keuze parameters:
+1) het inschakelen van LITE
+2) het opnemen van de besturingselementen in de CKEditor interface
+
+Z:\Mendix\CKE vergelijken\CKEditorForMendix.custV2\CKEditorForMendix\widget\lib\plugins\lite\readme.html (16 hits)
+	Line 2: <head><title>LITE (Track changes for CKEditor)</title>
+	Line 19: <p><a href="http://www.loopindex.com/lite/demo">Demo Page</a></p>
+	Line 21: <p><a href="http://www.loopindex.com/lite">LoopIndex</a></p>
+	Line 24: <li>Add the lite plugin to ckeditor. The simplest way to do this is by adding the following line to ckeditor's 
+	Line 25: <code>config.js</code>:<pre><code class="lang-javascript">  config.extraPlugins = 'lite';</code></pre>
+	Line 29: 	<span class="hljs-tag"><span class="hljs-title">&lt;script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"ckeditor/plugins/lite/lang/en.js"</span>&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+	Line 32: <li><p>Optionally include <code>lite-interface.js</code> in your source, so you can use the various constants defined in it rather than string literals.</p>
+	Line 33: <pre><code class="lang-javascript">&lt;script type="text/javascript" src="ckeditor/plugins/lite/lite-interface.js"&gt;&lt;/script&gt;</code></pre>
+	Line 33: <pre><code class="lang-javascript">&lt;script type="text/javascript" src="ckeditor/plugins/lite/lite-interface.js"&gt;&lt;/script&gt;</code></pre>
+	Line 35: <li><p>See the <a href="http://www.loopindex.com/lite/docs/" target="_blank">documentation</a> for all the configuration options.</p>
+	Line 39: <p>The LITE plugin is automatically activated after you install it and edit <code>config.js</code> as described above. For the full details of tweaking the loading process, toolbar commands, users and more, see the <a href="http://www.loopindex.com/lite/docs/" target="_blank">documentation</a>.</p>
+	Line 39: <p>The LITE plugin is automatically activated after you install it and edit <code>config.js</code> as described above. For the full details of tweaking the loading process, toolbar commands, users and more, see the <a href="http://www.loopindex.com/lite/docs/" target="_blank">documentation</a>.</p>
+	Line 41: <p>The LITE plugin exposes a wide range of methods, events and properties for controlling and reporting the tracked changes. see the <a href="http://www.loopindex.com/lite/docs/" target="_blank">documentation</a> for details.</p>
+	Line 41: <p>The LITE plugin exposes a wide range of methods, events and properties for controlling and reporting the tracked changes. see the <a href="http://www.loopindex.com/lite/docs/" target="_blank">documentation</a> for details.</p>
+	Line 45: <li> LITE tracks only text insertion and deletion. Other changes, such as style edits, are not tracked.
+	Line 49: LITE has been tested on Firefox 15+ and Chrome 13+. Support for MSIE 9+ is not guaranteed, although the current version seems to work on it.
+		
+	2) het opnemen van de besturingselementen in de CKEditor interface
+	
+	Toegevoegd in Editor.xml - na OTHERS item
+	
+		<property key="trackChanges" type="boolean" required="true" defaultValue="true">
+            <caption>Track Changes</caption>
+            <category>Document</category>
+            <description>Activate Track Changes without showing the toolbar.</description>
+        </property>
+        <property key="showChanges" type="boolean" required="true" defaultValue="true">
+            <caption>Tracking Tools</caption>
+            <category>Document</category>
+            <description>Show the Track Changes toolbar.</description>
+        </property>          
+		
+	Toevoegen in de CKEditorForMendix.js
+	
+	 ckeditorPlugins: [
+            "divarea",
+            "mendixlink",
+            "tableresize",
+            "oembed",
+            "widget",
+            "maximize",
+            "lite"
+        ],
+		
+GET PLUGINS
+		 _getPlugins: function (imageUpload) {
+            var plugins = [
+                "divarea",
+                "mendixlink",
+                "tableresize",
+                "oembed",
+                "widget",
+                "maximize"
+            ];
+
+            if (this._useImageUpload) {
+                plugins.push("uploadimage");
+                plugins.push("simple-image-browser");
+            } else {
+                plugins.push("pastebase64");
+            }
+
+            if (this.countPlugin) {
+                plugins.push("wordcount");
+            }
+            
+            if (this.trackChanges) {
+                plugins.push("lite");                
+            }
+
+            logger.debug(this.id + "._getPlugins: " + plugins.join(","));
+
+            return plugins.join(",");
+        },
+		
+		
+TOOLBAR definitie
+		if (this.toolbarOthers) {
+                this._settings[this.id].config.toolbarGroups.push({
+                    name: "others"
+                });
+            }
+
+		if (this.showChanges) {
+                this._settings[this.id].config.lite.commands = ["lite-toggletracking",  "lite-toggleshow", "lite-acceptall", "lite-rejectall", "lite-acceptone",  "lite-rejectone",  "lite-toggletooltips"];
+
+                this._settings[this.id].config.toolbarGroups.push({
+                    name: "lite"
+                });
+            }
+			
+3) configuratie LITE plugin
+
+	
